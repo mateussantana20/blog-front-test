@@ -2,24 +2,17 @@ import { useEffect, useState, FormEvent } from "react";
 import api from "../services/api";
 import { Link } from "react-router-dom";
 import { Post } from "../types";
-import {
-  Image as ImageIcon,
-  Calendar,
-  User,
-  ArrowRight,
-  Search,
-  X,
-} from "lucide-react";
+import { Image as ImageIcon, Calendar, User, Search, X } from "lucide-react";
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Novos estados para a busca
+  // Estados para a busca
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
-  // Função para carregar posts iniciais
+  // Carregar posts iniciais
   const loadDefaultPosts = () => {
     setLoading(true);
     api
@@ -37,22 +30,19 @@ export default function Home() {
     loadDefaultPosts();
   }, []);
 
-  // Função que chama o seu Backend de Busca
+  // Handler de Busca
   const handleSearch = async (e: FormEvent) => {
-    e.preventDefault(); // Evita recarregar a página
-
+    e.preventDefault();
     if (!searchTerm.trim()) {
       loadDefaultPosts();
       return;
     }
-
     setLoading(true);
     try {
-      // Chama o endpoint /search do seu Java
       const res = await api.get(`/posts/search?title=${searchTerm}`);
       const data = res.data.content ? res.data.content : res.data;
       setPosts(data);
-      setIsSearching(true); // Ativa o modo de busca
+      setIsSearching(true);
     } catch (error) {
       console.error("Erro na busca:", error);
     } finally {
@@ -60,7 +50,6 @@ export default function Home() {
     }
   };
 
-  // Função para limpar a busca
   const clearSearch = () => {
     setSearchTerm("");
     loadDefaultPosts();
@@ -70,49 +59,29 @@ export default function Home() {
   const otherPosts = posts.slice(1);
 
   return (
-    <div className="min-h-screen bg-gray-100 font-sans text-gray-900">
-      {/* --- HEADER COM BUSCA --- */}
-      <header className="bg-[#000914] text-white sticky top-0 z-50 border-b border-gray-800 shadow-md">
-        <div className="container mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          {/* Logo */}
-          <div>
-            <Link to="/" onClick={clearSearch}>
-              <h1 className="text-2xl md:text-3xl font-black tracking-tighter uppercase italic bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 cursor-pointer">
-                PLAYREPORT<span className="text-blue-500">.</span>
-              </h1>
-            </Link>
-          </div>
+    <div className="font-sans text-gray-900">
+      {/* Removido o <Header> antigo daqui */}
 
-          {/* Barra de Pesquisa */}
-          <div className="flex-1 max-w-md w-full mx-4">
-            <form onSubmit={handleSearch} className="relative group">
-              <input
-                type="text"
-                placeholder="Buscar notícias..."
-                className="w-full bg-gray-900 border border-gray-700 text-gray-300 rounded-full py-2 pl-4 pr-10 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all placeholder-gray-600 text-sm"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="absolute right-3 top-2.5 text-gray-500 group-focus-within:text-blue-500 hover:text-white transition"
-              >
-                <Search size={18} />
-              </button>
-            </form>
-          </div>
-
-          {/* Botão Login */}
-          <Link
-            to="/login"
-            className="text-xs font-bold bg-white text-[#000914] px-5 py-2.5 rounded hover:bg-blue-500 hover:text-white transition-all duration-300 uppercase tracking-wider shrink-0"
-          >
-            Login
-          </Link>
+      <main className="container mx-auto px-6 py-8">
+        {/* --- NOVA LOCALIZAÇÃO DA BARRA DE PESQUISA --- */}
+        <div className="mb-10 max-w-2xl mx-auto">
+          <form onSubmit={handleSearch} className="relative group shadow-sm">
+            <input
+              type="text"
+              placeholder="Buscar notícias..."
+              className="w-full bg-white border border-gray-300 text-gray-700 rounded-full py-3 pl-6 pr-12 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all placeholder-gray-400"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="absolute right-4 top-3 text-gray-400 group-focus-within:text-blue-600 hover:text-blue-800 transition"
+            >
+              <Search size={20} />
+            </button>
+          </form>
         </div>
-      </header>
 
-      <main className="container mx-auto px-6 py-10">
         {/* Feedback visual da busca */}
         {isSearching && (
           <div className="flex items-center justify-between mb-8">
@@ -135,7 +104,7 @@ export default function Home() {
             <p>Carregando conteúdo...</p>
           </div>
         ) : posts.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-lg shadow-sm">
+          <div className="text-center py-20 bg-white rounded-lg shadow-sm border border-gray-100">
             <Search size={48} className="mx-auto text-gray-300 mb-4" />
             <p className="text-gray-500 text-lg">
               Nenhum resultado encontrado.
@@ -151,7 +120,7 @@ export default function Home() {
           </div>
         ) : (
           <>
-            {/* --- LAYOUT DE BUSCA (GRADE SIMPLES) --- */}
+            {/* --- MODO DE BUSCA (GRADE) --- */}
             {isSearching ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {posts.map((post) => (
@@ -190,14 +159,14 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              /* --- LAYOUT PADRÃO (DESTAQUE + SIDEBAR) --- */
+              /* --- MODO PADRÃO (DESTAQUE + SIDEBAR) --- */
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Destaque */}
                 <div className="lg:col-span-8">
                   {featuredPost && (
                     <Link
                       to={`/post/${featuredPost.id}`}
-                      className="group relative block h-[500px] w-full overflow-hidden rounded-none shadow-xl"
+                      className="group relative block h-[500px] w-full overflow-hidden rounded-xl shadow-xl"
                     >
                       {featuredPost.imageUrl ? (
                         <img
@@ -212,17 +181,16 @@ export default function Home() {
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                       <div className="absolute bottom-0 left-0 p-8 w-full">
-                        <span className="bg-blue-600 text-white text-[10px] font-black px-3 py-1 uppercase tracking-widest mb-3 inline-block">
+                        <span className="bg-blue-600 text-white text-[10px] font-black px-3 py-1 uppercase tracking-widest mb-3 inline-block rounded">
                           {featuredPost.categoryName || "Destaque"}
                         </span>
-                        <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight mb-2 group-hover:text-blue-400 transition">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-2 group-hover:text-blue-400 transition">
                           {featuredPost.title}
                         </h2>
                         <div className="flex items-center gap-4 text-gray-300 text-xs font-medium uppercase tracking-wide mt-4">
                           <span className="flex items-center gap-1">
                             <User size={14} /> {featuredPost.author?.name}
                           </span>
-                          <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
                           <span className="flex items-center gap-1">
                             <Calendar size={14} /> Recente
                           </span>
@@ -233,18 +201,18 @@ export default function Home() {
                 </div>
 
                 {/* Sidebar */}
-                <div className="lg:col-span-4 flex flex-col gap-1">
-                  <h3 className="text-[#000914] font-black text-xl mb-4 uppercase tracking-tighter flex items-center gap-2">
-                    Últimas notícias{" "}
+                <div className="lg:col-span-4 flex flex-col gap-4">
+                  <h3 className="text-[#000914] font-black text-xl mb-2 uppercase tracking-tighter flex items-center gap-2 border-l-4 border-blue-600 pl-3">
+                    Últimas
                   </h3>
 
                   {otherPosts.map((post) => (
                     <Link
                       key={post.id}
                       to={`/post/${post.id}`}
-                      className="group flex gap-4 bg-white p-4 hover:bg-gray-50 border-b border-gray-200 transition shadow-sm"
+                      className="group flex gap-4 bg-white p-3 hover:bg-gray-50 rounded-lg border border-transparent hover:border-gray-200 transition shadow-sm"
                     >
-                      <div className="w-24 h-24 bg-gray-200 shrink-0 overflow-hidden relative">
+                      <div className="w-20 h-20 bg-gray-200 shrink-0 overflow-hidden relative rounded-md">
                         {post.imageUrl ? (
                           <img
                             src={post.imageUrl}
@@ -260,7 +228,7 @@ export default function Home() {
                         <span className="text-blue-600 text-[10px] font-bold uppercase mb-1">
                           {post.categoryName}
                         </span>
-                        <h3 className="font-bold text-gray-900 leading-snug group-hover:text-blue-700 transition line-clamp-2">
+                        <h3 className="font-bold text-gray-900 text-sm leading-snug group-hover:text-blue-700 transition line-clamp-3">
                           {post.title}
                         </h3>
                       </div>
@@ -272,12 +240,6 @@ export default function Home() {
           </>
         )}
       </main>
-
-      <footer className="bg-[#000914] text-gray-500 py-10 text-center border-t border-gray-800">
-        <p className="text-sm font-medium">
-          &copy; {new Date().getFullYear()} PLAYREPORT. All rights reserved.
-        </p>
-      </footer>
     </div>
   );
 }

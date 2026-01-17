@@ -20,7 +20,8 @@ export default function PostDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      // Usamos h-full ou min-h para centralizar o loading no espaço disponível
+      <div className="min-h-[50vh] flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
       </div>
     );
@@ -28,7 +29,7 @@ export default function PostDetails() {
 
   if (!post) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
+      <div className="min-h-[50vh] flex flex-col items-center justify-center bg-gray-50 gap-4">
         <h2 className="text-2xl font-bold text-gray-700">
           Notícia não encontrada
         </h2>
@@ -40,30 +41,19 @@ export default function PostDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-800">
-      {/* --- HEADER NOVO --- */}
-      <header className="bg-[#000914] text-white py-4 sticky top-0 z-50 shadow-md">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-gray-300 hover:text-white transition"
-          >
-            <ArrowLeft size={20} />
-            <span className="font-semibold text-sm uppercase hidden md:inline">
-              Voltar
-            </span>
-          </Link>
-          <Link
-            to="/"
-            className="text-xl md:text-2xl font-black uppercase tracking-tighter italic"
-          >
-            PLAYREPORT.COM.BR
-          </Link>
-          <div className="w-16"></div>
-        </div>
-      </header>
+    // Removemos o min-h-screen pois o App.tsx já cuida da altura total
+    <div className="bg-white font-sans text-gray-800 pb-12">
+      {/* --- BOTÃO VOLTAR (Substituto do Header antigo) --- */}
+      <div className="container mx-auto px-4 py-6">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-blue-600 font-bold uppercase text-xs transition"
+        >
+          <ArrowLeft size={16} /> Voltar para Home
+        </Link>
+      </div>
 
-      <article className="max-w-4xl mx-auto px-4 py-8 md:py-12">
+      <article className="max-w-4xl mx-auto px-4">
         {/* --- CABEÇALHO DO ARTIGO --- */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
@@ -105,25 +95,10 @@ export default function PostDetails() {
             />
           </div>
         )}
-
-        {/* --- CONTEÚDO DO TEXTO --- */}
         <div className="prose prose-lg max-w-none text-gray-800 leading-loose whitespace-pre-line text-lg">
           {post.content}
         </div>
       </article>
-
-      {/* --- FOOTER --- */}
-      <footer className="bg-gray-50 border-t mt-12 py-12 text-center">
-        <div className="container mx-auto px-4">
-          <p className="text-gray-500 mb-4">Gostou dessa notícia?</p>
-          <Link
-            to="/"
-            className="inline-block bg-[#000914] text-white px-8 py-3 rounded font-bold hover:bg-gray-800 transition"
-          >
-            Ler mais notícias
-          </Link>
-        </div>
-      </footer>
     </div>
   );
 }
