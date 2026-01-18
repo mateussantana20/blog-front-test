@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async"; // <--- 1. IMPORT NOVO
 import api from "../services/api";
 import { Calendar, User, ArrowLeft, Tag } from "lucide-react";
 import { Post } from "../types";
@@ -41,10 +42,20 @@ export default function PostDetails() {
 
   return (
     <div className="bg-white font-sans text-gray-800 pb-12 overflow-x-hidden">
+      {/* --- 2. SEO DINÂMICO (Muda o nome da aba) --- */}
+      <Helmet>
+        <title>{post.title} | PlayReport</title>
+        <meta
+          name="description"
+          content={
+            post.content.replace(/<[^>]*>?/gm, "").substring(0, 150) + "..."
+          }
+        />
+      </Helmet>
+      {/* ------------------------------------------- */}
+
       {/* --- BOTÃO VOLTAR --- */}
       <div className="container mx-auto px-6 py-6">
-        {" "}
-        {/* Aumentei px-4 para px-6 */}
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-gray-500 hover:text-blue-600 font-bold uppercase text-xs transition"
@@ -53,8 +64,6 @@ export default function PostDetails() {
         </Link>
       </div>
 
-      {/* --- ALTERAÇÃO PRINCIPAL AQUI EMBAIXO --- */}
-      {/* Mudei px-4 para px-6 (mobile) e md:px-12 (desktop) */}
       <article className="max-w-4xl mx-auto px-6 md:px-12 w-full">
         {/* --- CABEÇALHO DO ARTIGO --- */}
         <div className="text-center mb-8">
@@ -99,7 +108,6 @@ export default function PostDetails() {
         )}
 
         {/* --- CONTEÚDO DO TEXTO --- */}
-        {/* Adicionei 'mx-auto' para garantir que o texto fique centralizado se a tela for muito grande */}
         <div
           className="
             prose prose-lg max-w-none mx-auto text-gray-800 leading-loose text-lg w-full
